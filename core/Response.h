@@ -1,35 +1,27 @@
 #ifndef CORE_RESPONSE_H_
 #define CORE_RESPONSE_H_
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <strings.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#include "Core.h"
 
-#define SERVER_STRING "Server: Httpd/0.1.0\r\n"
+#define SERVER_STRING "Server: Httpd/1.0.0 \r\n"
+namespace httpd {
 
-class Response {
-public:
-	Response();
-	void method_error(int client_sock);
-	void not_found(int client_sock);
-	void bad_request(int client_sock);
-	void static_file(int client_sock,const char *realpath);
-	void dynamic_file(int client_sock,const char *realpath,const char *method,const char *query_string,int content_length);
-	virtual ~Response();
+	class Response {
+	public:
+		Response(int client_sock);
+		void method_error();
+		void not_found();
+		void bad_request();
+		void static_file(const char *realpath);
+		void dynamic_file(const char *realpath, const char *method,
+				const char *query_string, int content_length);
+		virtual ~Response();
 
-private:
-	void headers(int client_sock,int status);
-	void cannot_execute(int client_sock);
-};
+	private:
+		int client_sock;
+		void headers(int status);
+		void cannot_execute();
+	};
 
+}
 #endif
